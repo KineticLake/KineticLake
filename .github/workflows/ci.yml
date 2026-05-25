@@ -28,29 +28,32 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5 # Updated to v5
         with:
           python-version: ${{ matrix.python-version }}
           cache: "pip"
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v2
+        uses: astral-sh/setup-uv@v3 # Updated to v3
 
       - name: Install dependencies
         run: uv sync --all-extras
 
-      - name: Run unit tests
-        run: uv run pytest tests/unit -v --tb=short -m unit
+      # OPTIMIZATION: Combined test run and XML generation into a single step
+      # FIX: Injected the Databricks secrets so conftest.py doesn't crash
+      - name: Run unit tests & generate report
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+        run: uv run pytest tests/unit -v --tb=short -m unit --junitxml=test-results.xml
         continue-on-error: false
 
       - name: Run integration tests with Spark
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
         run: uv run pytest tests/integration -v --tb=short -m integration
         continue-on-error: true
-
-      - name: Generate test report
-        if: always()
-        run: |
-          uv run pytest tests/unit -v --tb=short --junitxml=test-results.xml
 
       - name: Upload test results
         if: always()
@@ -68,13 +71,13 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: "3.11"
           cache: "pip"
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v2
+        uses: astral-sh/setup-uv@v3
 
       - name: Install dependencies
         run: uv sync --all-extras
@@ -96,23 +99,29 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: "3.11"
           cache: "pip"
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v2
+        uses: astral-sh/setup-uv@v3
 
       - name: Install dependencies
         run: uv sync --all-extras
 
+      # FIX: Also requires secrets because it initializes Databricks via conftest.py
       - name: Run pytest with coverage
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
         run: uv run pytest tests/unit -v --cov=src --cov-report=xml --cov-report=term-missing
         continue-on-error: true
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4 # Updated to v4 to avoid Node 16 deprecation warnings
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }} # v4 requires a token
         with:
           files: ./coverage.xml
           flags: unittests
