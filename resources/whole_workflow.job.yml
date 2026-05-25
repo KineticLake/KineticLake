@@ -1,0 +1,42 @@
+resources:
+  jobs:
+    whole_workflow:
+      name: whole_workflow
+      tasks:
+        - task_key: bronze
+          disabled: false
+          email_notifications: {}
+          pipeline_task:
+            full_refresh: false
+            pipeline_id: 239bff17-83df-462c-a2b9-da1972a8e2b3
+          run_if: ALL_SUCCESS
+          timeout_seconds: 0
+          webhook_notifications: {}
+        - task_key: silver
+          depends_on:
+            - task_key: bronze
+          disabled: false
+          email_notifications: {}
+          pipeline_task:
+            full_refresh: false
+            pipeline_id: 1dfb6f07-bc89-486e-8dd2-e691b78b8a22
+          run_if: ALL_SUCCESS
+          timeout_seconds: 0
+          webhook_notifications: {}
+        - task_key: gold
+          depends_on:
+            - task_key: silver
+          disabled: false
+          email_notifications: {}
+          pipeline_task:
+            pipeline_id: 15a7e7a0-337a-47f9-9b7e-61ab94eaebbe
+          run_if: ALL_SUCCESS
+          timeout_seconds: 0
+      email_notifications:
+        no_alert_for_skipped_runs: false
+      max_concurrent_runs: 1
+      performance_target: PERFORMANCE_OPTIMIZED
+      queue:
+        enabled: true
+      timeout_seconds: 0
+      webhook_notifications: {}

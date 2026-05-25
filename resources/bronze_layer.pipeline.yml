@@ -1,0 +1,14 @@
+resources:
+  pipelines:
+    bronze_layer:
+      name: Bronze_layer
+      libraries:
+        - glob:
+            include: ../src/bronze/transformations/**
+      catalog: iot_data
+      channel: CURRENT
+      continuous: false
+      photon: true
+      root_path: ../src
+      schema: bronze
+      serverless: true

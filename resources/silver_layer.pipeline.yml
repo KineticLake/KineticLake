@@ -1,0 +1,14 @@
+resources:
+  pipelines:
+    silver_layer:
+      name: Silver_layer
+      libraries:
+        - glob:
+            include: ../src/transformations/**
+      catalog: iot_data
+      channel: CURRENT
+      continuous: false
+      photon: true
+      root_path: ../src
+      schema: silver
+      serverless: true

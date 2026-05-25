@@ -1,0 +1,14 @@
+resources:
+  pipelines:
+    gold_layer:
+      name: Gold_layer
+      libraries:
+        - glob:
+            include: ../src/gold/transformations/**
+      catalog: iot_data
+      channel: CURRENT
+      continuous: false
+      photon: true
+      root_path: ../src
+      schema: gold
+      serverless: true
