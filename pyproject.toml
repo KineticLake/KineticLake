@@ -32,6 +32,8 @@ packages = ["src"]
 
 [tool.ruff]
 line-length = 120
+# Tell Ruff to ignore undefined name errors for Databricks globals
+builtins = ["spark", "dbutils", "display"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
