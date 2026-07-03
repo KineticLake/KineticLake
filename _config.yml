@@ -2,3 +2,5 @@
 theme: jekyll-theme-cayman
 title: KineticLake
 description: Enterprise Lakehouse Architecture for Robotic Sensor Fusion
+readme_index:
+  with_frontmatter: true
