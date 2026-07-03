@@ -1,6 +1,6 @@
 # GitHub Pages Theme Configuration
 theme: jekyll-theme-cayman
 title: KineticLake
-description: Enterprise Lakehouse Architecture for Robotic Sensor Fusion
+description: "Cyber-Physical DataOps Platform for Robotic Sensor Fusion & GPS-Denied Localization"
 readme_index:
   with_frontmatter: true
